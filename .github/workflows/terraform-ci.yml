@@ -17,7 +17,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: TaskAdvanced1/envs/dev
+        working-directory: TaskAdvanced2/envs/dev
 
     steps:
       - name: Checkout
