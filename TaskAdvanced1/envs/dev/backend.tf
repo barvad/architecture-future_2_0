@@ -7,8 +7,7 @@ terraform {
     bucket = "practicum-terraform-state-bucket"
     region = "ru-central1"
     key    = "dev/terraform.tfstate"
-
-
+ 
     skip_region_validation      = true
     skip_credentials_validation = true
     skip_requesting_account_id  = true
