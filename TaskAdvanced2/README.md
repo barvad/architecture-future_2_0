@@ -1,86 +1,84 @@
-# Terraform VM Module for Multiple Environments
+# Terraform CI/CD + Remote State (S3-compatible)
 
-## Описание
+## Описание решения
 
-Проект реализует переиспользуемый Terraform-модуль для создания виртуальных машин в Yandex Cloud.
+Реализована инфраструктура с использованием Terraform и автоматизированным CI/CD через GitHub Actions.
 
-Модуль поддерживает:
-- настройку CPU и RAM;
-- подключаемый дополнительный диск;
-- подключение к subnet;
-- SSH-доступ;
-- использование в нескольких окружениях.
+Проект включает:
 
----
-
-## Структура проекта
-
-```text
-TaskAdvanced1/
-├── modules/
-│   └── vm/
-└── envs/
-    ├── dev/
-    ├── stage/
-    └── prod/
-```
+* переиспользуемый модуль VM;
+* 3 окружения (dev/stage/prod);
+* удалённое хранение состояния Terraform;
+* автоматизацию планирования и развёртывания инфраструктуры.
 
 ---
 
-## Параметры модуля
+## Архитектура
 
-| Переменная | Описание                     |
-| ---------- | ---------------------------- |
-| vm_name    | Имя ВМ                       |
-| zone       | Зона размещения              |
-| cores      | Количество CPU               |
-| memory     | RAM                          |
-| disk_size  | Размер дополнительного диска |
-| subnet_id  | ID подсети                   |
-| ssh_key    | SSH public key               |
-| image_id   | ID образа                    |
+* Terraform state хранится в S3-совместимом хранилище Yandex Cloud Object Storage
+* CI/CD реализован через GitHub Actions
+* инфраструктура разделена по окружениям (envs/dev, envs/stage, envs/prod)
 
 ---
 
-## Outputs
+## CI/CD pipeline
 
-| Output      | Описание                 |
-| ----------- | ------------------------ |
-| vm_id       | ID виртуальной машины    |
-| vm_name     | Имя ВМ                   |
-| internal_ip | Внутренний IP            |
-| external_ip | Внешний IP               |
-| disk_id     | ID дополнительного диска |
+Pipeline выполняет:
+
+1. `terraform init` — подключение backend (S3)
+2. `terraform validate` — проверка конфигурации
+3. `terraform plan` — построение плана изменений
+4. `terraform apply` — автоматический запуск (без workflow_dispatch)
+
+---
+
+## Remote state
+
+Используется S3 backend:
+
+* bucket: terraform-state-bucket
+* key: env-specific (dev/stage/prod)
+* storage: Yandex Object Storage
+* доступ через access_key / secret_key (GitHub Secrets)
+
+---
+
+## Безопасность
+
+Секреты не хранятся в репозитории:
+
+* OAuth token → GitHub Secrets
+* S3 credentials → GitHub Secrets
+* SSH key → GitHub Secrets
+
+---
+
+## Модульность
+
+Terraform модуль `vm_module`:
+
+* CPU / RAM конфигурируются через variables
+* диск подключается как secondary disk
+* сеть через subnet_id
+* SSH доступ через metadata
 
 ---
 
 ## Запуск
 
-### DEV
+### dev
 
 ```bash
-cd envs/dev
-
-terraform init
 terraform apply -var-file=terraform.tfvars
 ```
 
-### STAGE
+---
 
-```bash
-cd envs/stage
+## Особенности реализации
 
-terraform init
-terraform apply -var-file=terraform.tfvars
-```
-
-### PROD
-
-```bash
-cd envs/prod
-
-terraform init
-terraform apply -var-file=terraform.tfvars
-```
+* полностью переиспользуемый модуль
+* разделение окружений через tfvars
+* remote state без локального хранения
+* CI/CD без ручного запуска Terraform локально
 
 
