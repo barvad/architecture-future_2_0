@@ -1,0 +1,113 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Будущее 2.0 — Patient Service — Component Diagram
+
+Person(patient, "Пациент")
+Person(doctor, "Медицинский персонал")
+
+System_Boundary(platform, "Будущее 2.0 Platform") {
+
+ Container(api_gateway, "API Gateway", "Kong / Envoy")
+ Container(event_bus, "Event Bus", "Kafka / Redpanda")
+ Container(mdm, "MDM Platform", "Master Data")
+ Container(notification_service, "Notification Service", "Microservice")
+
+ ContainerDb(patient_db, "Patient Database", "PostgreSQL",  "Операционные данные пациентов")
+
+ Container(patient_service, "Patient Service", "Java / Go Microservice") {
+
+  Component(api_controller, "API Controller", "REST/gRPC Controllers", "Внешний API сервиса")
+
+  Component(auth_adapter, "Authorization Adapter", "Security Component", "Проверка JWT/OIDC claims")
+
+  Component(patient_application_service, "Patient Application Service", "Application Layer", "Оркестрация бизнес-сценариев")
+
+  Component(patient_domain_model, "Patient Domain Model", "Domain Layer", "Бизнес-логика пациентов")
+
+  Component(appointment_orchestrator, "Appointment Orchestrator", "Domain Service", "Логика записи на приём")
+
+  Component(patient_repository, "Patient Repository", "Persistence Adapter", "Работа с БД")
+
+  Component(outbox_repository, "Outbox Repository", "Persistence Adapter", "Хранение событий для гарантированной доставки")
+
+  Component(event_publisher, "Event Publisher", "Kafka Producer", "Публикация доменных событий")
+
+  Component(outbox_processor, "Outbox Processor", "Background Worker", "Outbox pattern")
+
+  Component(mdm_adapter, "MDM Adapter", "Integration Adapter", "Интеграция с MDM")
+
+  Component(notification_adapter, "Notification Adapter", "Integration Adapter", "Отправка уведомлений")
+
+  Component(audit_logger, "Audit Logger", "Audit Component", "Аудит действий пользователей")
+
+  Component(metrics_component, "Metrics & Tracing", "Observability Component", "Метрики и distributed tracing")
+ }
+}
+
+' =========================================================
+' USER INTERACTIONS
+' =========================================================
+
+Rel(patient, api_gateway, "HTTPS")
+Rel(doctor, api_gateway, "HTTPS")
+
+Rel(api_gateway, api_controller, "REST/gRPC")
+
+' =========================================================
+' SECURITY
+' =========================================================
+
+Rel(api_controller, auth_adapter, "Validate JWT")
+
+' =========================================================
+' BUSINESS FLOW
+' =========================================================
+
+Rel(api_controller, patient_application_service, "Calls")
+
+Rel(patient_application_service, patient_domain_model, "Executes business rules")
+
+Rel(patient_application_service, appointment_orchestrator, "Coordinates appointments")
+
+Rel(patient_application_service, patient_repository, "CRUD operations")
+
+Rel(patient_application_service, outbox_repository, "Stores domain events")
+
+Rel(patient_application_service, mdm_adapter, "Sync master data")
+
+Rel(patient_application_service, notification_adapter, "Send notifications")
+
+Rel(patient_application_service, audit_logger, "Write audit logs")
+
+Rel(patient_application_service, metrics_component, "Collect metrics")
+
+' =========================================================
+' DATABASE
+' =========================================================
+
+Rel(patient_repository, patient_db, "SQL")
+
+Rel(outbox_repository, patient_db, "Outbox table")
+
+' =========================================================
+' EVENT-DRIVEN
+' =========================================================
+
+Rel(outbox_processor, outbox_repository, "Reads pending events")
+
+Rel(outbox_processor, event_publisher, "Publishes events")
+
+Rel(event_publisher, event_bus, "Kafka events")
+
+' =========================================================
+' EXTERNAL INTEGRATIONS
+' =========================================================
+
+Rel(mdm_adapter, mdm, "REST/gRPC")
+
+Rel(notification_adapter, notification_service, "REST/Event")
+
+@enduml

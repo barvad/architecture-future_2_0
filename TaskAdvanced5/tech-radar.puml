@@ -1,0 +1,142 @@
+@startuml
+!theme plain
+
+title Будущее 2.0 — Expanded Technology Radar
+
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+legend right
+|= Статус |= Значение |
+|<#8BC34A>| Adopt |
+|<#03A9F4>| Trial |
+|<#FFC107>| Assess |
+|<#F44336>| Hold |
+endlegend
+
+' =========================================================
+' ARCHITECTURE & PATTERNS
+' =========================================================
+
+package "Architecture & Patterns" {
+
+    rectangle "Event-Driven Architecture\n(Adopt)" #8BC34A
+    rectangle "Domain-Driven Design\n(Adopt)" #8BC34A
+    rectangle "Data Mesh\n(Trial)" #03A9F4
+    rectangle "Self-Service BI\n(Adopt)" #8BC34A
+    rectangle "CQRS\n(Assess)" #FFC107
+    rectangle "Event Sourcing\n(Assess)" #FFC107
+    rectangle "Microservices\n(Adopt)" #8BC34A
+    rectangle "Strangler Fig Migration\n(Adopt)" #8BC34A
+    rectangle "API-First\n(Adopt)" #8BC34A
+    rectangle "Batch-Centric ETL\n(Hold)" #F44336
+    rectangle "Centralized Monolithic DWH\n(Hold)" #F44336
+}
+
+' =========================================================
+' DATA PLATFORM
+' =========================================================
+
+package "Data Platform" {
+
+    rectangle "Apache Kafka\n(Adopt)" #8BC34A
+    rectangle "Schema Registry\n(Adopt)" #8BC34A
+    rectangle "Apache Flink\n(Trial)" #03A9F4
+    rectangle "Apache Spark\n(Adopt)" #8BC34A
+    rectangle "Lakehouse Architecture\n(Adopt)" #8BC34A
+    rectangle "Apache Iceberg\n(Trial)" #03A9F4
+    rectangle "Delta Lake\n(Assess)" #FFC107
+    rectangle "ClickHouse\n(Adopt)" #8BC34A
+    rectangle "Trino\n(Trial)" #03A9F4
+    rectangle "dbt\n(Adopt)" #8BC34A
+    rectangle "DataHub/OpenMetadata\n(Trial)" #03A9F4
+    rectangle "Microsoft SQL Server 2008\n(Hold)" #F44336
+}
+
+' =========================================================
+' CLOUD & PLATFORM
+' =========================================================
+
+package "Cloud & Platform Engineering" {
+
+    rectangle "Kubernetes\n(Adopt)" #8BC34A
+    rectangle "Docker\n(Adopt)" #8BC34A
+    rectangle "Terraform\n(Adopt)" #8BC34A
+    rectangle "GitOps\n(Trial)" #03A9F4
+    rectangle "Service Mesh (Istio)\n(Trial)" #03A9F4
+    rectangle "Multi-Region Deployment\n(Assess)" #FFC107
+    rectangle "Serverless Functions\n(Assess)" #FFC107
+    rectangle "Bare Metal Scaling\n(Hold)" #F44336
+}
+
+' =========================================================
+' ANALYTICS & BI
+' =========================================================
+
+package "Analytics & BI" {
+
+    rectangle "Power BI\n(Trial)" #03A9F4
+    rectangle "Semantic Layer\n(Adopt)" #8BC34A
+    rectangle "Realtime Analytics\n(Adopt)" #8BC34A
+    rectangle "Stream Analytics\n(Trial)" #03A9F4
+    rectangle "Embedded Analytics\n(Assess)" #FFC107
+    rectangle "OLAP Cubes\n(Hold)" #F44336
+}
+
+' =========================================================
+' AI / ML
+' =========================================================
+
+package "AI / ML Platform" {
+
+    rectangle "MLflow\n(Adopt)" #8BC34A
+    rectangle "Kubeflow\n(Trial)" #03A9F4
+    rectangle "Feature Store (Feast)\n(Trial)" #03A9F4
+    rectangle "MLOps\n(Adopt)" #8BC34A
+    rectangle "Batch AI Pipelines\n(Hold)" #F44336
+}
+
+' =========================================================
+' SECURITY & GOVERNANCE
+' =========================================================
+
+package "Security & Governance" {
+
+    rectangle "Keycloak\n(Adopt)" #8BC34A
+    rectangle "RBAC/ABAC\n(Adopt)" #8BC34A
+    rectangle "Zero Trust\n(Trial)" #03A9F4
+    rectangle "mTLS\n(Trial)" #03A9F4
+    rectangle "Data Governance\n(Adopt)" #8BC34A
+    rectangle "Audit Logging\n(Adopt)" #8BC34A
+    rectangle "Data Residency Controls\n(Assess)" #FFC107
+}
+
+' =========================================================
+' OBSERVABILITY
+' =========================================================
+
+package "Observability" {
+
+    rectangle "Prometheus\n(Adopt)" #8BC34A
+    rectangle "Grafana\n(Adopt)" #8BC34A
+    rectangle "Loki\n(Trial)" #03A9F4
+    rectangle "Distributed Tracing\n(Trial)" #03A9F4
+    rectangle "OpenTelemetry\n(Trial)" #03A9F4
+    rectangle "Centralized Log Files\n(Hold)" #F44336
+}
+
+' =========================================================
+' LEGACY
+' =========================================================
+
+package "Legacy Technologies" {
+
+    rectangle "PowerBuilder\n(Hold)" #F44336
+    rectangle "Apache Camel ESB\n(Hold)" #F44336
+    rectangle "Shared Integration Database\n(Hold)" #F44336
+    rectangle "Synchronous Point-to-Point Integration\n(Hold)" #F44336
+}
+
+@enduml

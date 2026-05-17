@@ -1,0 +1,140 @@
+@startuml
+!theme plain
+
+title Будущее 2.0 — Event Storming / Event-Driven Architecture
+
+left to right direction
+
+skinparam rectangle {
+    RoundCorner 12
+    Shadowing false
+}
+
+skinparam ArrowThickness 1.5
+
+' =========================================================
+' DOMAINS
+' =========================================================
+
+package "Patient Management Domain" #E8F5E9 {
+
+    rectangle "Patient Registered" as ev_patient_registered #Orange
+    rectangle "Patient Profile Updated" as ev_patient_updated #Orange
+    rectangle "Consent Granted" as ev_consent_granted #Orange
+}
+
+package "Appointment Domain" #E3F2FD {
+
+    rectangle "Appointment Scheduled" as ev_appointment_scheduled #Orange
+    rectangle "Appointment Cancelled" as ev_appointment_cancelled #Orange
+    rectangle "Patient Checked-In" as ev_patient_checkedin #Orange
+}
+
+package "Clinical Workflow Domain" #F1F8E9 {
+
+    rectangle "Medical Examination Started" as ev_exam_started #Orange
+    rectangle "Medical Examination Completed" as ev_exam_completed #Orange
+    rectangle "Diagnosis Created" as ev_diagnosis_created #Orange
+}
+
+package "AI Diagnostics Domain" #FFF3E0 {
+
+    rectangle "AI Analysis Requested" as ev_ai_requested #Orange
+    rectangle "AI Research Completed" as ev_ai_completed #Orange
+    rectangle "AI Risk Detected" as ev_ai_risk #Orange
+}
+
+package "Fintech Domain" #F3E5F5 {
+
+    rectangle "Invoice Generated" as ev_invoice_generated #Orange
+    rectangle "Payment Completed" as ev_payment_completed #Orange
+    rectangle "Credit Application Submitted" as ev_credit_requested #Orange
+    rectangle "Credit Approved" as ev_credit_approved #Orange
+    rectangle "Fraud Suspicion Detected" as ev_fraud_detected #Orange
+}
+
+package "Pharma Domain" #FCE4EC {
+
+    rectangle "Prescription Issued" as ev_prescription_issued #Orange
+    rectangle "Prescription Sent To Pharma Partner" as ev_prescription_sent #Orange
+}
+
+package "Medical IoT Domain" #E1F5FE {
+
+    rectangle "Telemetry Received" as ev_telemetry_received #Orange
+    rectangle "Critical Device Alert Detected" as ev_device_alert #Orange
+}
+
+package "Analytics Domain" #ECEFF1 {
+
+    rectangle "Realtime Analytics Updated" as ev_analytics_updated #Orange
+    rectangle "Business KPI Calculated" as ev_kpi_calculated #Orange
+    rectangle "Dataset Published" as ev_dataset_published #Orange
+}
+
+package "Compliance Domain" #FFEBEE {
+
+    rectangle "Audit Record Created" as ev_audit_created #Orange
+    rectangle "Compliance Violation Detected" as ev_compliance_detected #Orange
+}
+
+package "Platform Domain" #FFF8E1 {
+
+    rectangle "Schema Version Published" as ev_schema_published #Orange
+    rectangle "DLQ Event Registered" as ev_dlq #Orange
+}
+
+' =========================================================
+' EVENT FLOWS
+' =========================================================
+
+ev_patient_registered --> ev_appointment_scheduled
+ev_patient_registered --> ev_invoice_generated
+ev_patient_registered --> ev_audit_created
+
+ev_consent_granted --> ev_ai_requested
+
+ev_appointment_scheduled --> ev_patient_checkedin
+ev_patient_checkedin --> ev_exam_started
+
+ev_exam_started --> ev_ai_requested
+ev_exam_completed --> ev_diagnosis_created
+
+ev_ai_requested --> ev_ai_completed
+ev_ai_completed --> ev_diagnosis_created
+ev_ai_completed --> ev_ai_risk
+
+ev_diagnosis_created --> ev_prescription_issued
+ev_prescription_issued --> ev_prescription_sent
+
+ev_invoice_generated --> ev_payment_completed
+ev_payment_completed --> ev_kpi_calculated
+
+ev_credit_requested --> ev_credit_approved
+ev_credit_approved --> ev_payment_completed
+
+ev_payment_completed --> ev_fraud_detected
+
+ev_telemetry_received --> ev_analytics_updated
+ev_telemetry_received --> ev_device_alert
+
+ev_analytics_updated --> ev_dataset_published
+ev_dataset_published --> ev_kpi_calculated
+
+ev_schema_published --> ev_dataset_published
+
+ev_ai_risk --> ev_compliance_detected
+ev_fraud_detected --> ev_compliance_detected
+
+ev_dlq --> ev_audit_created
+
+' =========================================================
+' LEGEND
+' =========================================================
+
+legend right
+|= Цвет |= Значение |
+|<#Orange>| Domain Event |
+endlegend
+
+@enduml

@@ -1,0 +1,121 @@
+@startuml
+!theme plain
+
+title Будущее 2.0 — Bounded Contexts (DDD)
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+package "Customer & Identity Domain" <<Bounded Context>> #DDEEFF {
+
+  [Customer Profile Context]
+  [Identity & Access Context]
+  [Consent Management Context]
+}
+
+package "Patient Care Domain" <<Bounded Context>> #E8F5E9 {
+
+  [Patient Management Context]
+  [Appointment Context]
+  [Clinical Workflow Context]
+  [Medical Records Context]
+  [Notification Context]
+}
+
+package "AI Diagnostics Domain" <<Bounded Context>> #FFF3E0 {
+
+  [AI Diagnostics Context]
+  [Feature Engineering Context]
+  [ML Model Management Context]
+}
+
+package "Fintech Domain" <<Bounded Context>> #F3E5F5 {
+
+  [Payment Context]
+  [Billing Context]
+  [Credit Context]
+  [Fraud Detection Context]
+}
+
+package "Pharma Ecosystem Domain" <<Bounded Context>> #FCE4EC {
+
+  [Pharma Partner Integration Context]
+  [Prescription Processing Context]
+}
+
+package "Medical IoT Domain" <<Bounded Context>> #E1F5FE {
+
+  [Telemetry Ingestion Context]
+  [Device Monitoring Context]
+}
+
+package "Analytics & Data Domain" <<Bounded Context>> #ECEFF1 {
+
+  [Realtime Analytics Context]
+  [Self-Service Analytics Context]
+  [Semantic Layer Context]
+  [Data Catalog Context]
+  [MDM Context]
+}
+
+package "Platform & Integration Domain" <<Bounded Context>> #FFF8E1 {
+
+  [Event Platform Context]
+  [Schema Governance Context]
+  [Observability Context]
+  [Legacy Integration Context]
+}
+
+package "Compliance & Governance Domain" <<Bounded Context>> #FFEBEE {
+
+  [Audit Context]
+  [Regional Compliance Context]
+  [Data Governance Context]
+}
+
+' =========================================================
+' CORE RELATIONSHIPS
+' =========================================================
+
+[Customer Profile Context] --> [Patient Management Context]
+[Customer Profile Context] --> [Payment Context]
+[Identity & Access Context] --> [Self-Service Analytics Context]
+
+[Patient Management Context] --> [Appointment Context]
+[Appointment Context] --> [Clinical Workflow Context]
+[Clinical Workflow Context] --> [Medical Records Context]
+
+[Clinical Workflow Context] --> [AI Diagnostics Context]
+[AI Diagnostics Context] --> [ML Model Management Context]
+[AI Diagnostics Context] --> [Feature Engineering Context]
+
+[Payment Context] --> [Billing Context]
+[Credit Context] --> [Fraud Detection Context]
+
+[Prescription Processing Context] --> [Pharma Partner Integration Context]
+
+[Telemetry Ingestion Context] --> [Device Monitoring Context]
+[Telemetry Ingestion Context] --> [Realtime Analytics Context]
+
+[Realtime Analytics Context] --> [Self-Service Analytics Context]
+[Semantic Layer Context] --> [Self-Service Analytics Context]
+[MDM Context] --> [Semantic Layer Context]
+
+[Event Platform Context] --> [Patient Management Context]
+[Event Platform Context] --> [Payment Context]
+[Event Platform Context] --> [AI Diagnostics Context]
+[Event Platform Context] --> [Realtime Analytics Context]
+
+[Schema Governance Context] --> [Event Platform Context]
+
+[Legacy Integration Context] --> [Event Platform Context]
+[Legacy Integration Context] --> [Medical Records Context]
+
+[Audit Context] --> [Data Governance Context]
+[Regional Compliance Context] --> [Medical Records Context]
+
+[Notification Context] --> [Patient Management Context]
+[Notification Context] --> [Billing Context]
+
+@enduml

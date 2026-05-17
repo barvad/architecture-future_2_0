@@ -36,7 +36,7 @@ Pipeline выполняет:
 
 Используется S3 backend:
 
-* bucket: terraform-state-bucket
+* bucket: practicum-terraform-state-bucket
 * key: env-specific (dev/stage/prod)
 * storage: Yandex Object Storage
 * доступ через access_key / secret_key (GitHub Secrets)
