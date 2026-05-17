@@ -1,0 +1,265 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Будущее 2.0 — Целевая Container Architecture (3 года)
+
+Person(patient, "Пациент")
+Person(doctor, "Медицинский персонал")
+Person(operator, "Оператор клиники")
+Person(analyst, "Бизнес-пользователь")
+Person(admin, "Администратор платформы")
+
+System_Boundary(future20, "Платформа Будущее 2.0") {
+
+    ' =========================================================
+    ' ACCESS LAYER
+    ' =========================================================
+
+    Container(api_gateway, "API Gateway", "Kong / Envoy / NGINX", "Единая точка входа, маршрутизация, rate limiting")
+
+    Container(iam, "Identity & Access Management", "Keycloak", "SSO, OAuth2/OIDC, RBAC/ABAC")
+
+    Container(service_mesh, "Service Mesh", "Istio / Linkerd", "mTLS, service discovery, traffic policies")
+
+    ' =========================================================
+    ' DOMAIN MICROSERVICES
+    ' =========================================================
+
+    System_Boundary(patient_domain, "Patient Domain") {
+
+ Container(patient_service, "Patient Service", "Java / Go Microservice", "Управление пациентами")
+
+ Container(appointment_service, "Appointment Service", "Java / Go Microservice", "Запись и расписание")
+
+ Container(notification_service, "Notification Service", "Microservice", "Уведомления пациентам")
+    }
+
+    System_Boundary(fintech_domain, "Fintech Domain") {
+
+ Container(payment_service, "Payment Service", "Go Microservice", "Платежи и транзакции")
+
+ Container(credit_service, "Credit Service", "Java Microservice", "Кредиты и скоринг")
+
+ Container(billing_service, "Billing Service", "Microservice", "Счета и финансовые операции")
+    }
+
+    System_Boundary(ai_domain, "AI Diagnostics Domain") {
+
+ Container(ai_inference_service, "AI Inference Service", "Python FastAPI", "AI inference и диагностика")
+
+ Container(model_serving, "Model Serving Platform", "KServe / Seldon", "Публикация ML моделей")
+    }
+
+    System_Boundary(pharma_domain, "Pharma Domain") {
+
+ Container(pharma_integration_service, "Pharma Integration Service", "Microservice", "Интеграция фармацевтических компаний")
+    }
+
+    System_Boundary(iot_domain, "Medical IoT Domain") {
+
+ Container(iot_ingestion_service, "IoT Ingestion Service", "Streaming Service", "Приём телеметрии оборудования")
+    }
+
+    System_Boundary(compliance_domain, "Regional Compliance Domain") {
+
+ Container(compliance_service, "Compliance Service", "Microservice", "Региональные требования и data residency")
+    }
+
+    ' =========================================================
+    ' EVENT PLATFORM
+    ' =========================================================
+
+    System_Boundary(event_platform, "Event Platform") {
+
+ Container(event_bus, "Event Bus", "Kafka / Redpanda", "Событийная платформа")
+
+ Container(schema_registry, "Schema Registry", "Apicurio / Confluent", "Контракты событий")
+
+ Container(dlq, "DLQ Platform", "Kafka DLQ", "Ошибочные события")
+
+ Container(stream_processing, "Stream Processing", "Flink / Spark Streaming", "Near-real-time обработка")
+    }
+
+    ' =========================================================
+    ' DATA PLATFORM
+    ' =========================================================
+
+    System_Boundary(data_platform, "Data Platform") {
+
+ Container(lakehouse, "Enterprise Lakehouse", "S3 + Iceberg/Delta", "Корпоративная аналитическая платформа")
+
+ Container(realtime_analytics, "Realtime Analytics", "ClickHouse / Druid", "Потоковые аналитические витрины")
+
+ Container(batch_processing, "Batch Processing", "Apache Spark", "Пакетная аналитика")
+
+ Container(semantic_layer, "Semantic Layer", "dbt / Cube", "Единая бизнес-модель")
+
+ Container(data_catalog, "Data Catalog", "DataHub / OpenMetadata", "Lineage, ownership, governance")
+
+ Container(mdm, "MDM Platform", "MDM", "Master Data Management")
+    }
+
+    ' =========================================================
+    ' AI/ML PLATFORM
+    ' =========================================================
+
+    System_Boundary(ml_platform, "ML Platform") {
+
+ Container(feature_store, "Feature Store", "Feast", "ML признаки")
+
+ Container(model_training, "Model Training Platform", "Kubeflow / MLFlow", "Обучение ML моделей")
+
+ Container(model_registry, "Model Registry", "MLFlow Registry", "Версионирование моделей")
+    }
+
+    ' =========================================================
+    ' SELF-SERVICE ANALYTICS
+    ' =========================================================
+
+    System_Boundary(analytics_platform, "Self-Service Analytics") {
+
+ Container(self_service_portal, "Self-Service Data Portal", "React + Backend API", "Self-service аналитика")
+
+ Container(report_engine, "Report Engine", "Analytics Backend", "Генерация отчётов")
+
+ Container(access_policy_engine, "Access Policy Engine", "OPA", "Контроль доступа")
+    }
+
+    ' =========================================================
+    ' OBSERVABILITY
+    ' =========================================================
+
+    System_Boundary(observability_platform, "Observability Platform") {
+
+ Container(metrics, "Metrics Monitoring", "Prometheus", "Метрики")
+
+ Container(logging, "Centralized Logging", "Loki / ELK", "Логирование")
+
+ Container(tracing, "Distributed Tracing", "Tempo / Jaeger", "Трассировка")
+    }
+
+    ' =========================================================
+    ' LEGACY TRANSITION
+    ' =========================================================
+
+    System_Boundary(legacy_transition, "Legacy Transition Layer") {
+
+ Container(legacy_acl, "Anti-Corruption Layer", "Camel + CDC", "Изоляция legacy интеграций")
+
+ Container(old_dwh, "Legacy DWH", "SQL Server 2008", "Временное legacy хранилище")
+
+ Container(old_powerbuilder, "PowerBuilder Client", "Desktop Application", "Legacy интерфейс операторов")
+
+ Container(old_bi, "Legacy BI", "Power BI", "Legacy аналитика")
+
+ Container(old_esb, "Legacy ESB", "Apache Camel", "Legacy интеграционный слой")
+    }
+}
+
+' =========================================================
+' USERS
+' =========================================================
+
+Rel(patient, api_gateway, "HTTPS")
+Rel(doctor, api_gateway, "HTTPS")
+Rel(operator, api_gateway, "HTTPS")
+Rel(analyst, self_service_portal, "HTTPS")
+Rel(admin, metrics, "Мониторинг")
+
+' =========================================================
+' AUTH
+' =========================================================
+
+Rel(api_gateway, iam, "OIDC/OAuth2")
+
+' =========================================================
+' DOMAIN CALLS
+' =========================================================
+
+Rel(api_gateway, patient_service, "REST/gRPC")
+Rel(api_gateway, appointment_service, "REST/gRPC")
+Rel(api_gateway, payment_service, "REST/gRPC")
+Rel(api_gateway, credit_service, "REST/gRPC")
+Rel(api_gateway, ai_inference_service, "REST/gRPC")
+
+' =========================================================
+' EVENTS
+' =========================================================
+
+Rel(patient_service, event_bus, "Publishes events")
+Rel(appointment_service, event_bus, "Publishes events")
+Rel(payment_service, event_bus, "Publishes events")
+Rel(credit_service, event_bus, "Publishes events")
+Rel(ai_inference_service, event_bus, "Publishes events")
+Rel(iot_ingestion_service, event_bus, "Publishes telemetry")
+Rel(pharma_integration_service, event_bus, "Publishes partner events")
+
+Rel(event_bus, schema_registry, "Uses schemas")
+Rel(event_bus, dlq, "Failed events")
+Rel(event_bus, stream_processing, "Streams")
+
+' =========================================================
+' ANALYTICS
+' =========================================================
+
+Rel(stream_processing, realtime_analytics, "Realtime aggregation")
+Rel(stream_processing, lakehouse, "Streaming ingestion")
+Rel(batch_processing, lakehouse, "Batch ETL")
+
+Rel(lakehouse, semantic_layer, "Business datasets")
+Rel(semantic_layer, report_engine, "Semantic metrics")
+
+Rel(self_service_portal, report_engine, "Build reports")
+Rel(self_service_portal, access_policy_engine, "Authorization")
+Rel(self_service_portal, data_catalog, "Search metadata")
+
+' =========================================================
+' AI/ML
+' =========================================================
+
+Rel(feature_store, lakehouse, "Historical features")
+Rel(model_training, lakehouse, "Training datasets")
+Rel(model_training, model_registry, "Registers models")
+Rel(model_serving, model_registry, "Loads models")
+Rel(ai_inference_service, model_serving, "Inference requests")
+Rel(ai_inference_service, feature_store, "Reads features")
+
+' =========================================================
+' MDM
+' =========================================================
+
+Rel(patient_service, mdm, "Master data")
+Rel(payment_service, mdm, "Customer data")
+Rel(credit_service, mdm, "Customer profiles")
+
+' =========================================================
+' LEGACY
+' =========================================================
+
+Rel(old_powerbuilder, old_dwh, "SQL")
+Rel(old_bi, old_dwh, "BI queries")
+Rel(old_esb, old_dwh, "Integration")
+
+Rel(old_dwh, legacy_acl, "CDC replication")
+Rel(old_esb, legacy_acl, "Legacy integration")
+
+Rel(legacy_acl, event_bus, "Publishes translated events")
+Rel(legacy_acl, lakehouse, "Replicates historical data")
+
+' =========================================================
+' OBSERVABILITY
+' =========================================================
+
+Rel(metrics, patient_service, "Collect metrics")
+Rel(metrics, payment_service, "Collect metrics")
+Rel(metrics, event_bus, "Collect metrics")
+
+Rel(logging, patient_service, "Collect logs")
+Rel(logging, event_bus, "Collect logs")
+
+Rel(tracing, api_gateway, "Distributed tracing")
+Rel(tracing, stream_processing, "Distributed tracing")
+
+@enduml
